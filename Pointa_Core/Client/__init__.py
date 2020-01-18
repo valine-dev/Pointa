@@ -36,6 +36,8 @@ class Pointa_Client():
         self.messageArray = []
         self.loopVars = {}
 
+        self.insertMessage('connected', self.keys[1])
+
     def insertMessage(self, verb, detail, nround=-1):
         self.messageArray.append(json.dump(
             {

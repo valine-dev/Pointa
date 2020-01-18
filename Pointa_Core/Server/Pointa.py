@@ -1,4 +1,7 @@
+import asyncio
 import random
+import math
+import time
 
 
 class Player:
@@ -17,6 +20,8 @@ class Player:
             2: 0
         }
 
+        self.temp = {}
+
     def action(self, data):
         self.actions = data
 
@@ -29,7 +34,39 @@ class Player:
         }
 
     def roll(self):
-        self.properties['pt'] += random.randint(1, 12)
+        self.temp['roll'] = random.randint(1, 12)
+        self.properties['pt'] += self.temp['roll']
+        return self.temp['roll']
+
+    def damage(self, pt):
+        self.temp['judge'] = random.randint(1, 12)
+
+        if self.temp['judge'] in range(1, 6):
+            self.temp['dmg'] = math.ceil((0.30 * pt ^ 2) * 0.5)
+        elif self.temp['judge'] in range(6, 12):
+            self.temp['dmg'] = math.ceil((0.30 * pt ^ 2))
+        elif self.temp['judge'] == 12:
+            self.temp['dmg'] = math.ceil((0.30 * pt ^ 2) * 1.5)
+
+        self.temp['def'] = self.properties['def']
+
+        self.properties['def'] = [
+            0,
+            self.properties['def'] - self.temp['dmg']
+        ][
+            self.properties['def'] > self.temp['dmg']
+        ]
+
+        self.temp['dmg'] = [
+            0,
+            self.temp['dmg'] - self.temp['def']
+        ][
+            self.temp['dmg'] > self.temp['def']
+        ]
+
+        self.properties['hp'] -= self.temp['dmg']
+
+        return self.temp['judge']
 
 
 class Pointa:
@@ -45,6 +82,7 @@ class Pointa:
         }
         self.actions = []
         self.temp = {}
+        self.log = []
 
     def settleRound(self):
         # Step 0, Check if actions are avaliable
@@ -69,20 +107,72 @@ class Pointa:
             if action['action'] == 0:  # Attack
                 self.temp['target'] = sorted(
                     self.players.pop(action['own']).items())[0]
-                self.temp['damage'] = (0.3 * action['value'] ^ 2)
-                self.temp['target'].properties['def'] = [
-                    0,
-                    self.temp['target'].properties['def'] - self.temp['damage']
-                ][
-                    (self.temp['target'].properties['def'] - self.temp['damage']) > 0
-                ]
-                self.temp['damage'] -= self.temp['target'].properties['def']
-                self.temp['target'].properties['def'] -= self.temp['damage']
+                self.logger(
+                    action['own'],
+                    'atkJudge',
+                    self.temp['target'].damage(action['value'])
+                )
 
-            elif action['action'] == 1:
-                self.players[action['own']].properties['def'] = (0.25 * action['value'] ^ 2)
+            elif action['action'] == 1:  # Defense
+                self.players[
+                    action['own']
+                ].properties[
+                    'def'
+                ] = (0.25 * action['value'] ^ 2)
 
-            elif action['action'] == 2:
-                self.players[action['own']].properties['hp'] = (0.35 * action['value'] ^ 2)
+            elif action['action'] == 2:  # Healing
+                self.players[
+                    action['own']
+                ].properties[
+                    'hp'
+                ] = (0.35 * action['value'] ^ 2)
+
                 if self.players[action['own']].properties['hp'] > 100:
                     self.players[action['own']].properties['hp'] = 100
+
+        # Step 3, Clear the nums
+        for p in self.players:
+            p.roundClear()
+
+    def gameStat(self):
+        return {
+            'Players': self.players.items(),
+            'Round': self.round,
+            'Log': self.log
+        }
+
+    def logger(self, actor, action, value):
+        self.log.append(
+            {
+                'time': int(time.time()),
+                'actor': actor,
+                'action': action,
+                'value': value
+            }
+        )
+
+    async def main(self):
+        self.round['num'] += 1
+        self.logger('game', 'roundBegin', self.round['num'])
+
+        # Phase 1
+        self.round['phase'] = 1
+        self.logger('game', 'phaseBegin', self.round)
+        for key, p in self.players:
+            self.logger(key, 'pointRolled', p.roll())
+
+        # Phase 2
+        self.round['phase'] = 2
+        self.logger('game', 'phaseBegin', self.round)
+        await asyncio.sleep(15)
+
+        # Phase 3
+        self.round['phase'] = 2
+        self.logger('game', 'phaseBegin', self.round)
+        self.settleRound()
+
+        for key, p in self.players:
+            if p.properties['hp'] < 1:
+                return p
+
+        self.main()
