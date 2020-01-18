@@ -5,7 +5,7 @@ import socket
 import Authorization
 
 
-class Pointa_Client():
+class Client():
 
     def __init__(self, target_uri, socket_object=None):
 
@@ -14,10 +14,7 @@ class Pointa_Client():
         self.selector = selectors.DefaultSelector()
 
         # Set Keypair
-        if Authorization.checkNew():
-            self.keys = Authorization.newUser()
-        else:
-            self.keys = Authorization.getKeys()
+        self.keys = Authorization.load()
 
         # Set Socket
         if socket_object:
@@ -36,7 +33,7 @@ class Pointa_Client():
         self.messageArray = []
         self.loopVars = {}
 
-        self.insertMessage('connected', self.keys[1])
+        self.insertMessage('Connect', self.keys[1])
 
     def insertMessage(self, verb, detail, nround=-1):
         self.messageArray.append(json.dump(
@@ -59,3 +56,7 @@ class Pointa_Client():
                 self.loopVars['message'] = self.messageArray.pop(0)
                 self.loopVars['connection'].sendall(self.loopVars['message'])
                 return self.loopVars['currentMessage']
+
+
+class Pointa_Client(Client):
+    pass

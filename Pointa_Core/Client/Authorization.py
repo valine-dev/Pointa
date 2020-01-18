@@ -58,3 +58,10 @@ def getKeys():
         keys.append(pv.read())
 
     return keys
+
+
+def load():
+    if checkNew():
+        return newUser()
+    else:
+        return getKeys()

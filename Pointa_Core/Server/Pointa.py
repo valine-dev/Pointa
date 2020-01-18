@@ -4,8 +4,10 @@ import math
 import time
 
 
-class Player:
-    'Base Player Class'
+class Player(object):
+    '''
+    Player Class
+    '''
     def __init__(self, key):
         self.key = key
         self.properties = {
@@ -39,8 +41,12 @@ class Player:
         return self.temp['roll']
 
     def damage(self, pt):
+        'Interface Calculates the damage'
+
+        # Set a random judge number affacts actual damage
         self.temp['judge'] = random.randint(1, 12)
 
+        # Calculate the actual damage by the judge number and used pt
         if self.temp['judge'] in range(1, 6):
             self.temp['dmg'] = math.ceil((0.30 * pt ^ 2) * 0.5)
         elif self.temp['judge'] in range(6, 12):
@@ -48,8 +54,10 @@ class Player:
         elif self.temp['judge'] == 12:
             self.temp['dmg'] = math.ceil((0.30 * pt ^ 2) * 1.5)
 
+        # Temporary stores the defense value
         self.temp['def'] = self.properties['def']
 
+        # Calculate the final defense value
         self.properties['def'] = [
             0,
             self.properties['def'] - self.temp['dmg']
@@ -57,6 +65,7 @@ class Player:
             self.properties['def'] > self.temp['dmg']
         ]
 
+        # Calculate the final damage to the player
         self.temp['dmg'] = [
             0,
             self.temp['dmg'] - self.temp['def']
@@ -64,13 +73,17 @@ class Player:
             self.temp['dmg'] > self.temp['def']
         ]
 
+        # Calculate the player's hp
         self.properties['hp'] -= self.temp['dmg']
 
+        # Return the judge number ready to be caught by logger
         return self.temp['judge']
 
 
-class Pointa:
-    'Base Game Emulator, Contains all Game Logics'
+class Pointa(object):
+    '''
+    Game Logics
+    '''
     def __init__(self, p1, p2):
         self.players = {
             p1.key: p1,
@@ -127,10 +140,11 @@ class Pointa:
                     'hp'
                 ] = (0.35 * action['value'] ^ 2)
 
+                # Make sure the healing action won't break the max health
                 if self.players[action['own']].properties['hp'] > 100:
                     self.players[action['own']].properties['hp'] = 100
 
-        # Step 3, Clear the nums
+        # Step 3, Clear the actions and wait for next Cauculating
         for p in self.players:
             p.roundClear()
 
@@ -152,27 +166,30 @@ class Pointa:
         )
 
     async def main(self):
+        'Main game Emulator'
         self.round['num'] += 1
         self.logger('game', 'roundBegin', self.round['num'])
 
-        # Phase 1
+        # Phase 1 - Roll the points
         self.round['phase'] = 1
         self.logger('game', 'phaseBegin', self.round)
         for key, p in self.players:
             self.logger(key, 'pointRolled', p.roll())
 
-        # Phase 2
+        # Phase 2 - Wait for the actions
         self.round['phase'] = 2
         self.logger('game', 'phaseBegin', self.round)
         await asyncio.sleep(15)
 
-        # Phase 3
+        # Phase 3 - Calculate the actions
         self.round['phase'] = 2
         self.logger('game', 'phaseBegin', self.round)
         self.settleRound()
 
+        # Return the failure
         for key, p in self.players:
             if p.properties['hp'] < 1:
                 return p
 
+        # Next Round
         self.main()

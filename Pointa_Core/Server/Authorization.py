@@ -6,13 +6,21 @@ from cryptography.hazmat.primitives import \
     serialization as crypto_serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 
+paths = [
+    './Pointa_Core/Server/Keys/private_key.pem',
+    './Pointa_Core/Server/Keys/public_key.pem'
+]
+
 
 def checkNew():
-    return not(path.isfile(path.abspath('./private_key.pem')))
+    global paths
+    return not(path.isfile(path.abspath(paths[0])))
 
 
 def newUser():
     'Generate a new Keypair then write it into files'
+
+    global paths
 
     Key = rsa.generate_private_key(
         backend=crypto_default_backend(),
@@ -29,11 +37,6 @@ def newUser():
         crypto_serialization.Encoding.OpenSSH,
         crypto_serialization.PublicFormat.OpenSSH)
 
-    paths = [
-        './Pointa_Core/Client/Keys/private_key.pem',
-        './Pointa_Core/Client/Keys/public_key.pem'
-    ]
-
     with open(path.abspath(paths[0]), 'wb') as pv:
         pv.write(pvKey)
 
@@ -44,12 +47,9 @@ def newUser():
 
 
 def getKeys():
-    keys = list()
+    keys = []
 
-    paths = [
-        './Pointa_Core/Client/Keys/private_key.pem',
-        './Pointa_Core/Client/Keys/public_key.pem'
-    ]
+    global paths
 
     with open(path.abspath(paths[1]), 'r') as pb:
         keys.append(pb.read())
@@ -58,3 +58,10 @@ def getKeys():
         keys.append(pv.read())
 
     return keys
+
+
+def load():
+    if checkNew():
+        return newUser()
+    else:
+        return getKeys()
