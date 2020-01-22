@@ -13,19 +13,16 @@ class Handler(StreamRequestHandler):
 
     keys = Authorization.load()
 
-    _logger = logging.getLogger(__name__)
-    _logger.setLevel(logging.INFO)
+    _logger = logging.getLogger(__name__).setLevel(logging.INFO)
 
-    consoleHandler = logging.StreamHandler()
-    consoleHandler.setLevel(logging.INFO)
+    consoleHandler = logging.StreamHandler().setLevel(logging.INFO)
     consoleHandler.setFormatter(
         logging.Formatter(
             '[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s'
         )
     )
 
-    fileHandler = logging.FileHandler('server.log')
-    fileHandler.setLevel(logging.INFO)
+    fileHandler = logging.FileHandler('server.log').setLevel(logging.INFO)
     fileHandler.setFormatter(
         logging.Formatter(
             '[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s'
@@ -47,8 +44,9 @@ class Handler(StreamRequestHandler):
                     'Player': Player(self.msg['Detail'])
                 }
             })
-        
+
         # Handle Match Command
         elif self.msg['Command'] == 'Match':
-            if self.msg['detail']
-
+            if self.msg['detail'] in playerList.keys():
+                # Stating a match
+                

@@ -182,7 +182,7 @@ class Pointa(object):
         await asyncio.sleep(15)
 
         # Phase 3 - Calculate the actions
-        self.round['phase'] = 2
+        self.round['phase'] = 3
         self.logger('game', 'phaseBegin', self.round)
         self.settleRound()
 
