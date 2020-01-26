@@ -4,7 +4,7 @@ from socketserver import StreamRequestHandler
 
 import Authorization
 
-from .Pointa import Player, Pointa
+from ..Pointa import Player, Pointa
 
 
 class Handler(StreamRequestHandler):

@@ -25,6 +25,9 @@ class Player(object):
         self.temp = {}
 
     def action(self, data):
+        if sum(data.values()) > self.properties['pt']:
+            return 'Illegal input!'
+        self.properties['pt'] -= sum(data.values())
         self.actions = data
 
     def roundClear(self):
@@ -48,11 +51,11 @@ class Player(object):
 
         # Calculate the actual damage by the judge number and used pt
         if self.temp['judge'] in range(1, 6):
-            self.temp['dmg'] = math.ceil((0.30 * pt ^ 2) * 0.5)
+            self.temp['dmg'] = math.ceil((0.30 * pow(pt, 2)) * 0.5)
         elif self.temp['judge'] in range(6, 12):
-            self.temp['dmg'] = math.ceil((0.30 * pt ^ 2))
+            self.temp['dmg'] = math.ceil(0.30 * pow(pt, 2))
         elif self.temp['judge'] == 12:
-            self.temp['dmg'] = math.ceil((0.30 * pt ^ 2) * 1.5)
+            self.temp['dmg'] = math.ceil((0.30 * pow(pt, 2)) * 1.5)
 
         # Temporary stores the defense value
         self.temp['def'] = self.properties['def']
@@ -97,15 +100,12 @@ class Pointa(object):
         self.temp = {}
         self.log = []
 
-    def settleRound(self):
-        # Step 0, Check if actions are avaliable
-        for p in self.players.items():
-            if sum(p.actions.items()) > p.properties['pt']:
-                return p
+        self.status = {}
 
+    def settleRound(self):
         # Setp 1, Sort out the actions.
-        for key, p in self.players:
-            for action, value in p.actions:
+        for key, p in self.players.items():
+            for action, value in p.actions.items():
                 self.actions.append({
                     'own': key,
                     'action': action,
@@ -115,55 +115,53 @@ class Pointa(object):
 
         # Step 2, Take actions.
         for action in self.actions:
-            self.players[action['own']].properties['pt'] -= action['value']
+            # Ignore null action
+            if action['value'] != 0:
+                if action['action'] == 0:  # Attack
+                    self.temp['target'] = list(filter(
+                        lambda x: x[0] != action['own'],
+                        self.players.items()
+                    ))[0][1]
+                    self.logger(
+                        action['own'],
+                        'atkJudge',
+                        self.temp['target'].damage(action['value'])
+                        )
 
-            if action['action'] == 0:  # Attack
-                self.temp['target'] = sorted(
-                    self.players.pop(action['own']).items())[0]
-                self.logger(
-                    action['own'],
-                    'atkJudge',
-                    self.temp['target'].damage(action['value'])
-                )
+                elif action['action'] == 1:  # Defense
+                    self.players[
+                        action['own']
+                    ].properties[
+                        'def'
+                    ] = (0.25 * pow(action['value'], 2))
 
-            elif action['action'] == 1:  # Defense
-                self.players[
-                    action['own']
-                ].properties[
-                    'def'
-                ] = (0.25 * action['value'] ^ 2)
+                elif action['action'] == 2:  # Healing
+                    self.players[
+                        action['own']
+                    ].properties[
+                        'hp'
+                    ] += (0.35 * pow(action['value'], 2))
 
-            elif action['action'] == 2:  # Healing
-                self.players[
-                    action['own']
-                ].properties[
-                    'hp'
-                ] = (0.35 * action['value'] ^ 2)
-
-                # Make sure the healing action won't break the max health
-                if self.players[action['own']].properties['hp'] > 100:
-                    self.players[action['own']].properties['hp'] = 100
+                    # Make sure the healing action won't break the max health
+                    if self.players[action['own']].properties['hp'] > 100:
+                        self.players[action['own']].properties['hp'] = 100
 
         # Step 3, Clear the actions and wait for next Cauculating
-        for p in self.players:
+        for key, p in self.players.items():
             p.roundClear()
-
-    def gameStat(self):
-        return {
-            'Players': self.players.items(),
-            'Round': self.round,
-            'Log': self.log
-        }
 
     def logger(self, actor, action, value):
         self.log.append(
             {
-                'time': int(time.time()),
+                'time': time.time(),
                 'actor': actor,
                 'action': action,
                 'value': value
             }
         )
+
+    def getLog(self):
+        return self.log
 
     async def main(self):
         'Main game Emulator'
@@ -173,7 +171,7 @@ class Pointa(object):
         # Phase 1 - Roll the points
         self.round['phase'] = 1
         self.logger('game', 'phaseBegin', self.round)
-        for key, p in self.players:
+        for key, p in self.players.items():
             self.logger(key, 'pointRolled', p.roll())
 
         # Phase 2 - Wait for the actions
@@ -187,9 +185,9 @@ class Pointa(object):
         self.settleRound()
 
         # Return the failure
-        for key, p in self.players:
+        for key, p in self.players.items():
             if p.properties['hp'] < 1:
                 return p
 
         # Next Round
-        self.main()
+        await self.main()
