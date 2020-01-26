@@ -1,5 +1,5 @@
-from Pointa import Pointa, Player
-from DynamicEventLoop import DynamicEventLoop
+from .Pointa import Pointa, Player
+from .DynamicEventLoop import DynamicEventLoop
 import asyncio
 import time
 
