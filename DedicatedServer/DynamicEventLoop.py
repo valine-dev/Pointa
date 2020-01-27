@@ -29,7 +29,7 @@ class DynamicEventLoop:
             )
 
         self.taskList = {}
-        self.temp = []
+        self.temp = [None, None]
 
     def run(self):
         'Starting Event Loop'
@@ -48,11 +48,12 @@ class DynamicEventLoop:
         )
         # Send updated signal to loop
         self.loop._csock.send(b'\0')
+        return self.taskList
 
     def pop(self, mark):
         '''Returns the result of the marked task
         Delete the marked task in loop'''
-        self.temp[0] = self.taskList.pop(mark)  # Get the task
-        self.temp[1] = self.temp[0].result()  # Get the result
-        self.temp[0].cancel()  # Cancel the task
-        return self.temp[1]
+        try:
+            self.taskList.pop(mark).cancel()  # Cancel the task
+        except KeyError:
+            return 'Incorrect Mark!'

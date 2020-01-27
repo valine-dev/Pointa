@@ -24,6 +24,11 @@ class Player(object):
 
         self.temp = {}
 
+        self.localVar = {
+            'round': 0,
+            'phase': 0
+        }
+
     def action(self, data):
         if sum(data.values()) > self.properties['pt']:
             return 'Illegal input!'
@@ -160,8 +165,18 @@ class Pointa(object):
             }
         )
 
-    def getLog(self):
-        return self.log
+    def getStat(self):
+        return {
+            'log': self.log,
+            'players': self.players,
+        }
+
+    def waitSync(self):
+        # Hanging the Emulator
+        while not (self.players.items()[0][1].values() and
+                   self.players.items()[0][1].values() == self.round.values()):
+            pass
+        return 0
 
     async def main(self):
         'Main game Emulator'
@@ -173,21 +188,32 @@ class Pointa(object):
         self.logger('game', 'phaseBegin', self.round)
         for key, p in self.players.items():
             self.logger(key, 'pointRolled', p.roll())
+        # Wait For Client Sync
+        self.waitSync()
 
         # Phase 2 - Wait for the actions
         self.round['phase'] = 2
         self.logger('game', 'phaseBegin', self.round)
         await asyncio.sleep(15)
+        # Wait For Client Sync
+        self.waitSync()
 
         # Phase 3 - Calculate the actions
         self.round['phase'] = 3
         self.logger('game', 'phaseBegin', self.round)
         self.settleRound()
 
-        # Return the failure
+        # Check if Player failed
         for key, p in self.players.items():
             if p.properties['hp'] < 1:
-                return p
+                self.logger('game', 'playerKilled', p)
+                self.temp['FINALSTAT'] = self.getStat()
 
+        # Return if anyone failed
+        if self.log[0]['action'] == 'playerKilled':
+            return self.temp['FINALSTAT']  # Stop Coro
+
+        # Wait For Client Sync
+        self.waitSync()
         # Next Round
         await self.main()
