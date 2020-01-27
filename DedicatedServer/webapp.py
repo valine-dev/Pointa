@@ -2,8 +2,8 @@ import asyncio
 
 from flask import Flask, g, jsonify, request, session
 
-import Authorization
-from Pointa import Player, Pointa
+from . import Authorization
+from .Pointa import Player, Pointa
 
 from .DynamicEventLoop import DynamicEventLoop
 
