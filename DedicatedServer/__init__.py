@@ -15,35 +15,16 @@ import Authorization
 from .configs.Config import UserConfig
 from DynamicEventLoop import DynamicEventLoop
 from Pointa import Player, Pointa
-from webapp import PointaMain
-
-Blueprints = {
-    '/pointa/': PointaMain
-}
+from webapp import app, Data
 
 
-def create_app(config, bps: dict):
-    app = Flask(__name__)
-    for ep, bp in bps.items():
-        app.register_blueprint(bp, url_prefix=ep)
-
-    # Event Loop
-    loop = asyncio.get_event_loop()
-    Del = DynamicEventLoop(loop)
-    Del.run()
-
-    @app.before_first_request
-    def init():
-        with app.app_context():
-            g.keyPair = Authorization.load()
-            g.playerList = {}
-            g.matchList = {}
-            g.tLopp = Del
-
+def init_app(config):
+    # Init the app
+    app.config.from_object(UserConfig)
     return app
 
 
 def Serve(port: int):
-    httpServer = HTTPServer(WSGIContainer(create_app(UserConfig, Blueprints)))
+    httpServer = HTTPServer(WSGIContainer(init_app(UserConfig)))
     httpServer.listen(5000)
     IOLoop.instance().start()

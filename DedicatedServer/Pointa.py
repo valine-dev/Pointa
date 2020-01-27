@@ -158,7 +158,7 @@ class Pointa(object):
     def logger(self, actor, action, value):
         self.log.append(
             {
-                'time': time.time(),
+                'time': int(round(time.time() * 1000)),
                 'actor': actor,
                 'action': action,
                 'value': value
