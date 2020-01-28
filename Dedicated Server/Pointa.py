@@ -211,6 +211,7 @@ class Pointa(object):
 
         # Return if anyone failed
         if self.log[0]['action'] == 'playerKilled':
+            self.logger('game', 'gameEnd', 0)
             return self.temp['FINALSTAT']  # Stop Coro
 
         # Wait For Client Sync

@@ -1,11 +1,14 @@
 import asyncio
+import uuid
 
-from flask import Flask, g, jsonify, request, session
+from flask import Flask, g, jsonify, request, session, abort
 
 from . import Authorization
 from .Pointa import Player, Pointa
 
 from .DynamicEventLoop import DynamicEventLoop
+
+data = None
 
 app = Flask(__name__)
 
@@ -14,28 +17,24 @@ class Data:
         self.playerList = {}
         self.matchList = {}
 
-
-@app.before_first_request
-def init():
-    with app.app_context():
-        g._keyPair = Authorization.load()
-        g._data = Data()
-        # Looper
-        loop = asyncio.get_event_loop()
-        Del = DynamicEventLoop(loop)
-        Del.run()
-        g._DLoop = Del
+data = Data()
+Del = DynamicEventLoop()
+Del.run()
 
 # Handling Requests Outside the Game period
 @app.route('/outGame/<key>', methods=['POST'])
 def outGameHandler(key):
-    req = request.json
-    Data = getattr(g, '_data', None)
-    Loop = getattr(g, '_DLoop', None)
+    global data
+    global Del
+    req = request.get_json(force=True)
+    Data = data
+    Loop = Del
 
     if req['Action'] == 'Ready':
+        # Generate a uid as key
         Data.playerList.update({key: Player(key)})
-        return jsonify({'Action': 'Accepted'})
+        uid = uuid.uuid5(uuid.NAMESPACE_DNS, request.remote_addr)
+        return jsonify({'UUID': str(uid)})
 
     elif req['Action'] == 'Invite':
 
@@ -52,12 +51,18 @@ def outGameHandler(key):
                 (key, req['Target']): match
             })
 
-        return jsonify({'Action': 'Accepted'})
+            return jsonify({'Action': 'Accepted'})
+        else:
+            abort(404)
 
 @app.route('/inGame/<key>', methods=['GET', 'POST'])
 def inGameHandler(key):
-    req = request.json
-    Data = getattr(g, '_data', None)
+    global data
+    global Del
+    req = request.get_json(force=True)
+    Data = data
+
+    currentMatch = None
 
     # Find current match
     for match in Data.matchList.items():
@@ -65,6 +70,9 @@ def inGameHandler(key):
                 currentMatch = match[1]
                 another = [x for x in match[0] if x!=key][0]
                 break
+
+    if currentMatch == None:
+        abort(404)
 
     # Insert Action
     if request.method == 'POST':
@@ -76,7 +84,7 @@ def inGameHandler(key):
                 2: dat[2]
             })
             return jsonify({'Action': 'Accepted'})
-        return jsonify({'Action': 'Denied'})
+        abort(405)
     elif request.method == 'GET':
         # Get request args
         fTS = int(request.args.get("finalTimeStamp"))
@@ -102,13 +110,14 @@ def inGameHandler(key):
             {
                 'UpdatedLog': uptLog,
                 'playerStats': {
-                    key: [
+                    'self': [
                         stat['players'][key].properties,
                         stat['players'][key].actions
                     ],
-                    another: [
+                    'another': [
                         stat['players'][another].properties,
-                        stat['players'][another].actions
+                        stat['players'][another].actions,
+                        stat['players'][another].key
                     ]
                 }
             }

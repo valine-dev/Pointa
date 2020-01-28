@@ -7,8 +7,8 @@ from cryptography.hazmat.primitives import \
 from cryptography.hazmat.primitives.asymmetric import rsa
 
 paths = [
-    './Pointa_Core/Server/Keys/private_key.pem',
-    './Pointa_Core/Server/Keys/public_key.pem'
+    './Dedicated Server/Keys/private_key.pem',
+    './Dedicated Server/Keys/public_key.pem'
 ]
 
 
