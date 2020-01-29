@@ -11,7 +11,6 @@ from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 from tornado.wsgi import WSGIContainer
 
-from . import Authorization
 from .configs.Config import UserConfig
 from .DynamicEventLoop import DynamicEventLoop
 from .Pointa import Player, Pointa
