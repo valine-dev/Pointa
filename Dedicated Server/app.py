@@ -30,10 +30,14 @@ def before():
     global Del
     data.req += 1
     if data.req % 1000 == 0:
-        for key, p in data.playerList.items():  # Overtime Detection
+        temps = [
+            list(data.playerList.items()),
+            list(Del.taskList.items())
+        ]
+        for key, p in temps[0]:  # Overtime Detection
             if int(time.time()) - p[1] >= 60:
                 data.playerList.pop(key)
-        for key, ga in Del.taskList:  # Done match Detection
+        for key, ga in temps[1]:  # Done match Detection
             if ga.done():
                 Del.pop(key)
 
@@ -102,9 +106,9 @@ def inGameHandler(key):
         if currentMatch.round['phase'] == 2:
             dat = req['Action']
             Data.playerList[key][0].action({
-                0: dat[0],
-                1: dat[1],
-                2: dat[2]
+                0: int(dat[0]),
+                1: int(dat[1]),
+                2: int(dat[2])
             })
             return jsonify({'Action': 'Accepted'})
         abort(405)

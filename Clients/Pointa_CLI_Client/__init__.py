@@ -27,9 +27,10 @@ clientStatus = {
 targetUri = ''
 ingameStruct = '/inGame/{0}?fts={1}&r={2}&p={3}'
 
-def Write():
+def Write(key):
     actions = input('Actions ("atk,def,hel")> ').split(',')
-    purl = f"{targetUri}/inGame/{clientStatus['key']}"
+    print('\n')
+    purl = f"{targetUri}/inGame/{key}"
     payload = {
         'Action': [
             actions[0],
@@ -41,38 +42,45 @@ def Write():
     if req.status_code != 200:
         print('Request failed! Code is ', req.status_code)
 
-
-# Handling Updated Log Pharse
-def Phrase(json):
+def Phrase(json, localVar, localLog, key):
     for cmd in json['UpdatedLog']:
         if cmd['action'] == 'roundBegin':
             print('\n')
-            localVar['Round'] = cmd['value']
+            print(f"--------Round-{cmd['value']}---------")
+            localVar['round'] = cmd['value']
 
-        if cmd['action'] == 'pointRolled':
+        elif cmd['action'] == 'pointRolled':
             print(f"{cmd['actor']} Rolled {cmd['value']} Pts!")
 
-        if cmd['action'] == 'phaseBegin':
-            if cmd['value']['phase'] == '2':
-                # Print players' status
-                for tag, p in json['playerStats']:
+        elif cmd['action'] == 'phaseBegin':
+            if cmd['value']['phase'] == 2:
+                for tag, p in json['playerStats'].items():
                     print(
                         f'{tag} | {p[0]}'
                     )
-                Write()
-            elif cmd['value']['phase'] == '3':
-                # Print players' actions
-                for tag, p in json['playerStats']:
+                Write(key)
+            elif cmd['value']['phase'] == 3:
+                for tag, p in json['playerStats'].items():
                     print(
                         f'{tag} | {p[1]}'
                     )
                 print('Round ', str(cmd['value']), ' Settled!')
             localVar['phase'] = cmd['value']['phase']
 
-        if cmd['action'] == 'atkJudge':
+        elif cmd['action'] == 'atkJudge':
             print(
                 f"{cmd['actor']} Rolled {cmd['value']} for atk judge!"
                 )
+
+        elif cmd['action'] == 'playerKilled':
+            print('Player', str(cmd['value'], 'was Killed!'))
+
+        elif cmd['action'] == 'gameEnd':
+            print('Game over.', )
+            for tag, p in json['playerStats'].items():
+                    print(
+                        f'{tag} | {p[1]}'
+                    )
         localLog.append(cmd)
 
 def Game():
@@ -94,7 +102,7 @@ def Game():
 
     req = requests.get(url)
     if req.status_code == 200:
-        Phrase(req.json())
+        Phrase(req.json(), localVar, localLog, clientStatus['key'])
     else:
         print('Request failed! Code is ', req.status_code)
 

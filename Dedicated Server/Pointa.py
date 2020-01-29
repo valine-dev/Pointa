@@ -173,8 +173,7 @@ class Pointa(object):
 
     def waitSync(self):
         # Hanging the Emulator
-        while not (self.players.items()[0][1].values() and
-                   self.players.items()[0][1].values() == self.round.values()):
+        while not (list(list(self.players.items())[0][1].localVar.values()) and list(list(self.players.items())[1][1].localVar.values()) == list(self.round.values())):
             pass
         return 0
 
@@ -206,11 +205,11 @@ class Pointa(object):
         # Check if Player failed
         for key, p in self.players.items():
             if p.properties['hp'] < 1:
-                self.logger('game', 'playerKilled', p)
+                self.logger('game', 'playerKilled', p.key)
                 self.temp['FINALSTAT'] = self.getStat()
 
         # Return if anyone failed
-        if self.log[0]['action'] == 'playerKilled':
+        if self.log[-1]['action'] == 'playerKilled':
             self.logger('game', 'gameEnd', 0)
             return self.temp['FINALSTAT']  # Stop Coro
 

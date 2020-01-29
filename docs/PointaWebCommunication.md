@@ -1,10 +1,15 @@
+# PointaWebCommunication
+
+**Pointa uses HTTP in communication, these are some conventions in Pointa web communication.** 
+
 ## ClientSide
 
-### **Ingame**
+### Ingame
+
 Sync (GET)
 
-```
-.../inGame/<key>/?finalTimeStamp=<Time>&round=<LocalRound>&phase=<LocalPhase>
+```json
+.../inGame/<key>/?fts=<Time>&r=<LocalRound>&p=<LocalPhase>
 ```
 
 Insert (POST TO `.../inGame/<key>`)
@@ -13,7 +18,7 @@ Insert (POST TO `.../inGame/<key>`)
 {Action: [<ATK>, <DEF>, <HEL>]}
 ```
 
-### **Outside Game**
+### Outside Game
 
 POST TO `.../outGame/<key>`
 
@@ -28,7 +33,7 @@ POST TO `.../outGame/<key>`
 
 ## ServerSide
 
-### **Ingame**
+### Ingame
 
 Sync Response
 
