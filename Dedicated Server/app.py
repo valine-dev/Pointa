@@ -1,12 +1,11 @@
 import asyncio
-import uuid
 import time
+import uuid
 
-from flask import Flask, g, jsonify, request, session, abort
-
-from .Pointa import Player, Pointa
+from flask import Flask, abort, g, jsonify, request, session
 
 from .DynamicEventLoop import DynamicEventLoop
+from .Pointa import Player, Pointa
 
 data = None
 
@@ -21,6 +20,20 @@ class Data:
 data = Data()
 Del = DynamicEventLoop()
 Del.run()
+
+# Lag Remover
+@app.before_request
+def before():
+    global data
+    global Del
+    data.req += 1
+    if data.req % 100 == 0:
+        for key, p in data.playerList.items():  # Overtime Detection
+            if int(time.time()) - p[1] >= 60:
+                data.playerList.pop(key)
+        for key, g in Del.taskList:  # Done match Detection
+            if g.done():
+                Del.pop(key)
 
 # Handling Requests Outside the Game period
 @app.route('/outGame/<key>', methods=['POST'])
@@ -128,17 +141,3 @@ def inGameHandler(key):
                 }
             }
         )
-
-@app.after_request
-def after():
-    
-    global data
-    global Del
-    data.req += 1
-    if data.req % 100 == 0:
-        for key, p in data.playerList.items():  # Overtime Detection
-            if int(time.time()) - p[1] >= 60:
-                data.playerList.pop(key)
-        for key, g in Del.taskList:  # Done match Detection
-            if g.done():
-                Del.pop(key)

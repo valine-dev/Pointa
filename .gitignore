@@ -3,6 +3,8 @@ __pycache__
 .venv
 out
 ./Clients/Pointa_CLI_Client/Keys/
+private_key.pem
+public_key.pem
 
 [Ll]ibrary/
 [Tt]emp/
