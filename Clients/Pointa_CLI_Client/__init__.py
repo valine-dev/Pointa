@@ -25,7 +25,7 @@ clientStatus = {
 }
 
 targetUri = ''
-ingameStruct = '/inGame/{0}/?finalTimeStamp={1}&round={2}&phase={3}'
+ingameStruct = '/inGame/{0}?fts={1}&r={2}&p={3}'
 
 def Write():
     actions = input('Actions ("atk,def,hel")> ').split(',')
@@ -143,7 +143,7 @@ while True:
 
             # Generate Request
             payload = {
-                'Action': 'Ready',
+                'Action': 'Invite',
                 'Target': targetKey
             }
             req = requests.post(

@@ -1,6 +1,7 @@
 import asyncio
 import time
 import uuid
+import random
 
 from flask import Flask, abort, g, jsonify, request, session
 
@@ -16,6 +17,7 @@ class Data:
         self.playerList = {}
         self.matchList = {}
         self.req = 0
+        self.taskList = {}
 
 data = Data()
 Del = DynamicEventLoop()
@@ -27,12 +29,12 @@ def before():
     global data
     global Del
     data.req += 1
-    if data.req % 100 == 0:
+    if data.req % 1000 == 0:
         for key, p in data.playerList.items():  # Overtime Detection
             if int(time.time()) - p[1] >= 60:
                 data.playerList.pop(key)
-        for key, g in Del.taskList:  # Done match Detection
-            if g.done():
+        for key, ga in Del.taskList:  # Done match Detection
+            if ga.done():
                 Del.pop(key)
 
 # Handling Requests Outside the Game period
@@ -44,28 +46,28 @@ def outGameHandler(key):
 
     if req['Action'] == 'Ready':
         # Generate a uid as key
-        uid = uuid.uuid5(uuid.NAMESPACE_DNS, request.remote_addr)
-        data.playerList.update({uid: (
-            Player(uid),
+        uid = uuid.uuid5(uuid.NAMESPACE_DNS, request.remote_addr + str(random.randint(0, 100)))
+        data.playerList.update({str(uid): [
+            Player(str(uid)),
             int(time.time()),  # Last Communicate time
-        )})
+        ]})
         return jsonify({'UUID': str(uid)})
 
     elif req['Action'] == 'Invite':
 
         data.playerList[key][1] = int(time.time())
 
-        if req['Target'] in g.playerList.keys():
+        if req['Target'] in data.playerList.keys():
 
             match = Pointa(
                     data.playerList[key][0],
                     data.playerList[req['Target']][0]
                 )
-
             Del.append(match, match.main())
 
+            keys = (key + ',' + req['Target'])
             data.matchList.update({
-                (key, req['Target']): match
+                keys: match
             })
 
             return jsonify({'Action': 'Accepted'})
@@ -76,25 +78,27 @@ def outGameHandler(key):
 def inGameHandler(key):
     global data
     global Del
-    req = request.get_json(force=True)
     Data = data
 
     data.playerList[key][1] = int(time.time())
 
-    currentMatch = None
+    currentMatches = []
 
     # Find current match
     for match in data.matchList.items():
-            if key in match[0]:
-                currentMatch = match[1]
-                another = [x for x in match[0] if x!=key][0]
+            if key in match[0].split(','):
+                currentMatches.append(match[1])
+                another = [x for x in match[0].split(',') if x!=key][0]
                 break
 
-    if currentMatch == None:
+    try:
+        currentMatch = currentMatches[0]
+    except IndexError:
         abort(404)
 
     # Insert Action
     if request.method == 'POST':
+        req = request.get_json(force=True)
         if currentMatch.round['phase'] == 2:
             dat = req['Action']
             Data.playerList[key][0].action({
@@ -104,12 +108,12 @@ def inGameHandler(key):
             })
             return jsonify({'Action': 'Accepted'})
         abort(405)
+
     elif request.method == 'GET':
         # Get request args
-        fTS = int(request.args.get("finalTimeStamp"))
-        roundL = int(request.args.get("round"))
-        phaseL = int(request.args.get("phase"))
-
+        fTS = int(request.args.get("fts"))
+        roundL = int(request.args.get("r"))
+        phaseL = int(request.args.get("p"))
         # Sync Local Vars to Player Object
         Data.playerList[key][0].localVar = {
             'round': roundL,
