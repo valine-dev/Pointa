@@ -2,6 +2,7 @@
 __pycache__
 .venv
 out
+./Clients/Pointa_CLI_Client/Keys/
 
 [Ll]ibrary/
 [Tt]emp/
