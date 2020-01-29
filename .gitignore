@@ -5,6 +5,8 @@ out
 ./Clients/Pointa_CLI_Client/Keys/
 private_key.pem
 public_key.pem
+Pointa.egg-info
+dist
 
 [Ll]ibrary/
 [Tt]emp/
