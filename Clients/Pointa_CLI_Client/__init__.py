@@ -25,7 +25,7 @@ clientStatus = {
 }
 
 targetUri = ''
-ingameStruct = '/inGame/%a/?finalTimeStamp=%b&round=%c&phase=%d'
+ingameStruct = '/inGame/{0}/?finalTimeStamp={1}&round={2}&phase={3}'
 
 def Write():
     actions = input('Actions ("atk,def,hel")> ').split(',')
@@ -38,7 +38,7 @@ def Write():
         ]
     }
     req = requests.post(purl, json=payload)
-    if req.status_code != req.ok:
+    if req.status_code != 200:
         print('Request failed! Code is ', req.status_code)
 
 
@@ -78,22 +78,22 @@ def Phrase(json):
 def Game():
     time.sleep(0.01)
     if localLog == []:
-        url = targetUri + (ingameStruct % (
+        url = targetUri + ingameStruct.format(
                 clientStatus['key'],
                 '0',
                 '0',
                 '0'
-            ))
+            )
     else:
-        url = targetUri + (ingameStruct % (
+        url = targetUri + ingameStruct.format(
                 clientStatus['key'],
                 localLog[-1]['time'],
                 localVar['round'],
                 localVar['phase']
-            ))
+            )
 
     req = requests.get(url)
-    if req.status_code == req.ok:
+    if req.status_code == 200:
         Phrase(req.json())
     else:
         print('Request failed! Code is ', req.status_code)
@@ -104,14 +104,14 @@ def Game():
 while True:
     if clientStatus['inGame']:
         if clientStatus['waiting']:
-            url = targetUri + (ingameStruct % (
+            url = targetUri + ingameStruct.format(
                 clientStatus['key'],
-                'none',
-                'none',
-                'none'
-            ))
+                '0',
+                '0',
+                '0'
+            )
             req = requests.get(url)
-            if req.status_code == req.ok:
+            if req.status_code == 200:
                 clientStatus['waiting'] = False
                 print('Recieved! Game is about to begin!')
                 time.sleep(5)
@@ -129,7 +129,7 @@ while True:
                 targetUri+'/outGame/'+'null',
                 json=payload
             )
-            if req.status_code == req.ok:
+            if req.status_code == 200:
                 clientStatus['key'] = req.json()['UUID']
                 print('Logged in! Your key is ', clientStatus['key'])
                 clientStatus['loggedIn'] = True
@@ -150,7 +150,7 @@ while True:
                 targetUri+'/outGame/'+clientStatus['key'],
                 json=payload
             )
-            if req.status_code == req.ok:
+            if req.status_code == 200:
                 print('Invited! Game is about to begin!')
                 clientStatus['inGame'] = True
                 time.sleep(5)
