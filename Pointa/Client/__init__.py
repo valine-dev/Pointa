@@ -30,7 +30,7 @@ ingameStruct = '/inGame/{0}?fts={1}&r={2}&p={3}'
 def Write(key):
     actions = input('Actions ("atk,def,hel")> ').split(',')
     print('\n')
-    purl = f"{targetUri}/inGame/{key}"
+    purl = "{0}/inGame/{1}".format(targetUri, key)
     payload = {
         'Action': [
             actions[0],
