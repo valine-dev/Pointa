@@ -4,10 +4,6 @@ from os import system
 
 import requests
 
-from . import Authorization
-
-keyPair = Authorization.load()[0]
-
 
 # Setting up local vars
 localVar = {
