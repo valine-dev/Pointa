@@ -1,5 +1,7 @@
 # Welcome to "Pointa!" Project!
 
+[中文](https://github.com/KRedCell/Pointa/blob/master/docs/README_ZH.md)
+
 <h2 id="Summary">Summary</h2>
 "Pointa!" is a board game which is simple to learn & enjoy. Meanwhile you can also play the game with pen and paper, but this repository is meant to implement the game in python as back-end.
 

@@ -55,13 +55,13 @@
     ```bash
     git clone https://github.com/KRedCell/Pointa
     ```
-    获取最新的Pointa
+    获取最新的Pointa，并进入 Pointa 文件夹
 
-2. 安装 Dedicated Server 下的 requirements.txt 后
+2. 安装 Server 下的 requirements.txt 后
     ```bash
-    python -m 'Dedicated Server' -p
+    python -m Pointa.Server -p
     ```
-    启动服务器（如无-p参数即启动development环境服务器）
+    启动服务器（如无 -p 参数即启动development环境服务器）
 
 **客户端**
 
@@ -69,10 +69,10 @@
     ```bash
     git clone https://github.com/KRedCell/Pointa
     ```
-    获取最新的Pointa
+    获取最新的Pointa，并进入 Pointa 文件夹
 
-2. 安装 Pointa_CLI_Client 下的 requirements.txt 后
+2. 安装 Client 下的 requirements.txt 后
     ```bash
-    python -m Pointa_CLI_Client
+    python -m Pointa.Client
     ```
     启动游戏
