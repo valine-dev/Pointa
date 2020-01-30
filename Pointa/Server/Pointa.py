@@ -203,6 +203,9 @@ class Pointa(object):
         self.logger('game', 'phaseBegin', self.round)
         self.settleRound()
 
+        # Wait For Client Sync
+        self.waitSync()
+
         # Check if Player failed
         for key, p in self.players.items():
             if p.properties['hp'] < 1:
@@ -214,7 +217,5 @@ class Pointa(object):
             self.logger('game', 'gameEnd', 0)
             return self.temp['FINALSTAT']  # Stop Coro
 
-        # Wait For Client Sync
-        self.waitSync()
         # Next Round
         await self.main()

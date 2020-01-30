@@ -50,12 +50,14 @@ def Phrase(json, localVar, localLog, key):
 
         elif cmd['action'] == 'phaseBegin':
             if cmd['value']['phase'] == 2:
+                print('Now, Player status are...')
                 for tag, p in json['playerStats'].items():
                     print(
                         f'{tag} | {p[0]}'
                     )
                 Write(key)
             elif cmd['value']['phase'] == 3:
+                print('\nNow, Player Actions are...')
                 for tag, p in json['playerStats'].items():
                     print(
                         f'{tag} | {p[1]}'
@@ -69,10 +71,11 @@ def Phrase(json, localVar, localLog, key):
                 )
 
         elif cmd['action'] == 'playerKilled':
-            print('Player', str(cmd['value'], 'was Killed!'))
+            print('Player', str(cmd['value']), 'was Killed!')
 
         elif cmd['action'] == 'gameEnd':
             print('Game over.', )
+            print('Now, Player status are...')
             for tag, p in json['playerStats'].items():
                     print(
                         f'{tag} | {p[1]}'
