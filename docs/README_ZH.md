@@ -1,78 +1,65 @@
-# 欢迎来到Pointa!
+# Pointa! Project
 
-<h2 id="Summary">Summary</h2>
-"Pointa!" 是一个简单易懂的桌游（实际上你甚至可以用纸和笔来玩），这个repo是为了在python里实现Pointa的玩法。
+[中文](docs/README_ZH.md)
+
+## 目录
+
+- [背景](#背景)
+- [安装](#安装)
+- [使用](#使用)
+- [API](#api)
+- [贡献](#贡献)
+- [协议](#协议)
+
+## 背景
+"Pointa!" 是一个简单易懂的桌游（实际上你甚至可以用纸和笔来玩），这个repo是Pointa游戏机制在python里的一个实现。
 
 
-* [游戏部分](#Game)
-* [程序部分](#Program)
+### 关于游戏规则书 ...
+我们建议你在游玩、参与开发之前，至少先浏览一遍游戏规则书，这不仅能让你理解游戏中许多专有名词的含义，还因为Pointa本身确实是有趣的。
 
----
+**游戏规则书**
+- [English](docs/GameInstruction.md)
+- [中文](docs/GameInstruction_ZH.md)
 
-<h2 id="Game">游戏部分</h2>
+## 安装
 
-### 规则书
-1. **准备**
-    - 游玩Pointa需要两名玩家，一张纸、一支笔和一颗12面骰子或两颗6面骰子。
+从该库中拉取最新版本（或者下载最新的[Release](https://github.com/KRedCell/Pointa/releases)）
+```sh
+$ git clone https://github.com/KRedCell/Pointa.git
+```
+接着安装
+```sh
+$ python setup.py install
+```
 
-2. **数值**
-    - 玩家属性
-        - HP: 玩家的生命值，初始值（最高值）为100，当任意玩家该数值低于或等于0时，该玩家判定死亡。
-        - PT: 玩家由每回合第一阶段获得，初始值为0，无上限。
-        - DEF: 由玩家使用DEF行动获得，仅在一回合内有效，每回合结束时清零。
-    - 操作值
-        - ATK/DEF/HEL: 攻击/防御/治疗行动值，从玩家的PT值中抽调而出，仅在每回合的第二阶段可操控，回合结束后归零。
+## 使用
 
-3. **游戏流程**
-    1. **第一阶段**
-        - 玩家各自1d12或2d6，将获得的点数存入pt中。
-    2. **第二阶段**
-        - 玩家独立向三个行动值（ATK/DEF/HEL）分配点数（向任意行动值中分配0点即视为不在本回合内执行该操作），任意玩家总分配点数不能超过所该玩家拥有的PT属性值，双方确认分配完毕后再同时展示分配结果，并无法在本回合内再次更改。
-    3. **第三阶段**
-        - 第一步: 排序
-            - 除去分配值为0的行动，把所有行动由分配点数从小到大的顺序排列，但若两个操作点数相同，则相同行动者并列，不同行动者按照HEL/DEF/ATK的顺序先后排列。
+安装后，你可以使用Pointa的专用服务器或命令行客户端
 
-        - 第二步: 执行
-            - 按照排列好的行动表先后执行，则各行动的执行方法如下表（x为该行动分配的点数）：
-            >|Action|Process|
-            >|:----:|:----:|
-            >|atk|执行者再次1d12/2d6做攻击判定，其结果决定最终伤害的倍数(a)，掷出点与伤害倍数（a）的关系是， 当结果在 **1-5之间, a=0.5**. **6-11 时 a=1.0**. **12 时 a=1.5**.  最终伤害即 **a(0.3x^2) - target's DEF**(向上取整且负数值视为0), 受伤害者def减去 **a(0.3x^2)** (负数值视为0) |
-            >|def|向执行者DEF属性加 **0.25x^2**(向上取整)|
-            >|hel|向执行者HP属性加 **0.35x^2**(向上取整) 但不能超过上限100|
+如果是作为 `客户端`
+```sh
+$ python -m Pointa.Client -l [语言代码]
+```
+[支持的语言](docs/SupportedLanguages.md)
 
-        - 第三步: 结算
-	        - 若此时有任意一玩家HP属性值小于等于0（即该玩家死亡），则该玩家判负。若该回合内两名玩家均死亡，则HP属性值的绝对值最大者判负。若无上述情况，进行下一回合。
+作为 `服务器`
+```sh
+$ python -m Pointa.Server -p
+```
+删除`-p`开启`开发`服务器 
 
-***
 
-<h2 id="Program">程序部分</h2>
+## API
+[API Refrences (未完成)](docs/Pointa_Web_API_Refrences.md)
 
-### 部署
+## 贡献
+无需感到拘束！发送PR或者[开个issue](https://github.com/KRedCell/Pointa/issues/new) 都可以！
 
-**服务端**
+另：本项目遵从 [贡献者公约](http://contributor-covenant.org/version/1/3/0/)的行为准则。
 
-1. 使用
-    ```bash
-    git clone https://github.com/KRedCell/Pointa
-    ```
-    获取最新的Pointa，并进入 Pointa 文件夹
+## 协议
 
-2. 安装 Server 下的 requirements.txt 后
-    ```bash
-    python -m Pointa.Server -p
-    ```
-    启动服务器（如无 -p 参数即启动development环境服务器）
+[MIT © Red_Cell](../LICENSE)
 
-**客户端**
-
-1. 使用
-    ```bash
-    git clone https://github.com/KRedCell/Pointa
-    ```
-    获取最新的Pointa，并进入 Pointa 文件夹
-
-2. 安装 Client 下的 requirements.txt 后
-    ```bash
-    python -m Pointa.Client
-    ```
-    启动游戏
+**Special Thanks to [Standard Readme](https://github.com/RichardLitt/standard-readme)**
