@@ -78,12 +78,14 @@ def outGameHandler(key):
         else:
             abort(404)
 
+# Handling Requests in the Game period
 @app.route('/inGame/<key>', methods=['GET', 'POST'])
 def inGameHandler(key):
     global data
     global Del
     Data = data
 
+    # Updating last communicating time 
     data.playerList[key][1] = int(time.time())
 
     currentMatches = []
@@ -132,6 +134,12 @@ def inGameHandler(key):
                 stat['log']
             )
         )
+
+        anotherAction = {}
+        # Avoid Client Cheating
+        if currentMatch.round['phase'] == 3:
+            anotherAction = stat['players'][another].actions
+
         # Return Sync Result in Standard Format
         return jsonify(
             {
@@ -143,7 +151,7 @@ def inGameHandler(key):
                     ],
                     'another': [
                         stat['players'][another].properties,
-                        stat['players'][another].actions,
+                        anotherAction,
                         stat['players'][another].key
                     ]
                 }
