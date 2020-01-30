@@ -35,8 +35,8 @@ def Write(key):
         ]
     }
     req = requests.post(purl, json=payload)
-    if req.status_code != 200:
-        print('Request failed! Code is ', req.status_code)
+    if req.status_code == 405:
+        print('OverTimed or Bad Input!')
 
 def Phrase(json, localVar, localLog, key):
     for cmd in json['UpdatedLog']:
@@ -80,7 +80,9 @@ def Phrase(json, localVar, localLog, key):
                     print(
                         f'{tag} | {p[1]}'
                     )
+            return True
         localLog.append(cmd)
+        return False
 
 def Game():
     time.sleep(0.01)
@@ -101,9 +103,11 @@ def Game():
 
     req = requests.get(url)
     if req.status_code == 200:
-        Phrase(req.json(), localVar, localLog, clientStatus['key'])
+        if Phrase(req.json(), localVar, localLog, clientStatus['key']):
+            return True
     else:
         print('Request failed! Code is ', req.status_code)
+    return False
 
 
 
@@ -124,7 +128,8 @@ while True:
                 time.sleep(5)
                 system('cls')
         else:
-            Game()
+            if Game():
+                break
     else:
         # Out Game Process
         if not clientStatus['loggedIn']:

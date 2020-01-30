@@ -108,12 +108,13 @@ def inGameHandler(key):
         req = request.get_json(force=True)
         if currentMatch.round['phase'] == 2:
             dat = req['Action']
-            Data.playerList[key][0].action({
+            res = Data.playerList[key][0].action({
                 0: int(dat[0]),
                 1: int(dat[1]),
                 2: int(dat[2])
             })
-            return jsonify({'Action': 'Accepted'})
+            if res:
+                return jsonify({'Action': 'Accepted'})
         abort(405)
 
     elif request.method == 'GET':

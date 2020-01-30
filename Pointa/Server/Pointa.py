@@ -31,9 +31,10 @@ class Player(object):
 
     def action(self, data):
         if sum(data.values()) > self.properties['pt']:
-            return 'Illegal input!'
+            return False
         self.properties['pt'] -= sum(data.values())
         self.actions = data
+        return True
 
     def roundClear(self):
         self.properties['def'] = 0
@@ -102,7 +103,7 @@ class Pointa(object):
             'phase': 0
         }
 
-        asyncio.set_event_loop(loop)
+        asyncio.events.set_event_loop(loop)
 
         self.actions = []
         self.temp = {}
