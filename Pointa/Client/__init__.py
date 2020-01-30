@@ -82,7 +82,7 @@ def Phrase(json, localVar, localLog, key):
                     )
             return True
         localLog.append(cmd)
-        return False
+    return False
 
 def Game():
     time.sleep(0.01)

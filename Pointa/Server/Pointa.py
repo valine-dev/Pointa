@@ -30,7 +30,7 @@ class Player(object):
         }
 
     def action(self, data):
-        if sum(data.values()) > self.properties['pt']:
+        if sum(list(data.values())) > self.properties['pt']:
             return False
         self.properties['pt'] -= sum(data.values())
         self.actions = data
@@ -112,6 +112,7 @@ class Pointa(object):
         self.status = {}
 
     def settleRound(self):
+        self.actions = []
         # Setp 1, Sort out the actions.
         for key, p in self.players.items():
             for action, value in p.actions.items():
@@ -154,10 +155,6 @@ class Pointa(object):
                     # Make sure the healing action won't break the max health
                     if self.players[action['own']].properties['hp'] > 100:
                         self.players[action['own']].properties['hp'] = 100
-
-        # Step 3, Clear the actions and wait for next Cauculating
-        for key, p in self.players.items():
-            p.roundClear()
 
     def logger(self, actor, action, value):
         self.log.append(
@@ -203,6 +200,10 @@ class Pointa(object):
         self.round['phase'] = 3
         self.logger('game', 'phaseBegin', self.round)
         self.settleRound()
+
+        # Step 3, Clear the actions and wait for next Cauculating
+        for key, p in self.players.items():
+            p.roundClear()
 
         # Wait For Client Sync
         self.waitSync()
