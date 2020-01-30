@@ -1,7 +1,7 @@
 import asyncio
+import random
 import time
 import uuid
-import random
 
 from flask import Flask, abort, g, jsonify, request, session
 
@@ -54,6 +54,7 @@ def outGameHandler(key):
         data.playerList.update({str(uid): [
             Player(str(uid)),
             int(time.time()),  # Last Communicate time
+            req['Target'] # Player's Username
         ]})
         return jsonify({'UUID': str(uid)})
 
@@ -75,9 +76,11 @@ def outGameHandler(key):
                 keys: match
             })
 
-            return jsonify({'Action': 'Accepted'})
+            return jsonify({'targetName': data.playerList[req['Target']][2]})
         else:
             abort(404)
+    elif req['Action'] == 'Quit':
+        data.playerList.pop(key)
 
 # Handling Requests in the Game period
 @app.route('/inGame/<key>', methods=['GET', 'POST'])
@@ -142,6 +145,11 @@ def inGameHandler(key):
         if currentMatch.round['phase'] == 3:
             anotherAction = stat['players'][another].actions
 
+        try:
+            username = Data.playerList[stat['players'][another].key][2]
+        except KeyError:
+            abort(404)
+
         # Return Sync Result in Standard Format
         return jsonify(
             {
@@ -154,7 +162,8 @@ def inGameHandler(key):
                     'another': [
                         stat['players'][another].properties,
                         anotherAction,
-                        stat['players'][another].key
+                        stat['players'][another].key,
+                        Data.playerList[stat['players'][another].key][2]  # Username
                     ]
                 }
             }

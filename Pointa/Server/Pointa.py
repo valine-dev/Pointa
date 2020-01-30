@@ -197,16 +197,16 @@ class Pointa(object):
         await asyncio.sleep(15)
 
         # Phase 3 - Calculate the actions
+        self.settleRound()  # Make sure atk judge will be logged before phase is logged
         self.round['phase'] = 3
         self.logger('game', 'phaseBegin', self.round)
-        self.settleRound()
+
+        # Wait For Client Sync
+        self.waitSync()
 
         # Step 3, Clear the actions and wait for next Cauculating
         for key, p in self.players.items():
             p.roundClear()
-
-        # Wait For Client Sync
-        self.waitSync()
 
         # Check if Player failed
         for key, p in self.players.items():
