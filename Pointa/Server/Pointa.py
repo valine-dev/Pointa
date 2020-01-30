@@ -92,7 +92,7 @@ class Pointa(object):
     '''
     Game Logics
     '''
-    def __init__(self, p1, p2):
+    def __init__(self, p1, p2, loop):
         self.players = {
             p1.key: p1,
             p2.key: p2
@@ -101,6 +101,9 @@ class Pointa(object):
             'num': 0,
             'phase': 0
         }
+
+        asyncio.set_event_loop(loop)
+
         self.actions = []
         self.temp = {}
         self.log = []
@@ -194,8 +197,6 @@ class Pointa(object):
         self.round['phase'] = 2
         self.logger('game', 'phaseBegin', self.round)
         await asyncio.sleep(15)
-        # Wait For Client Sync
-        self.waitSync()
 
         # Phase 3 - Calculate the actions
         self.round['phase'] = 3

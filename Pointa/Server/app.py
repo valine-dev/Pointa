@@ -65,7 +65,8 @@ def outGameHandler(key):
 
             match = Pointa(
                     data.playerList[key][0],
-                    data.playerList[req['Target']][0]
+                    data.playerList[req['Target']][0],
+                    Del.loop
                 )
             Del.append(match, match.main())
 
