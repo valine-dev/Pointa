@@ -15,8 +15,8 @@
 "Pointa!" 是一个简单易懂的桌游（实际上你甚至可以用纸和笔来玩），这个repo是Pointa游戏机制在python里的一个实现。
 
 
-### 关于游戏规则书 ...
-我们建议你在游玩、参与开发之前，至少先浏览一遍游戏规则书，这不仅能让你理解游戏中许多专有名词的含义，还因为Pointa本身确实是有趣的。
+> ### 关于游戏规则书 ...
+> 我们建议你在游玩、参与开发之前，至少先浏览一遍游戏规则书，这不仅能让你理解游戏中许多专有名词的含义，还因为Pointa本身确实是有趣的。
 
 **游戏规则书**
 - [English](./GameInstruction.md)
@@ -33,6 +33,9 @@ $ git clone https://github.com/KRedCell/Pointa.git
 $ python setup.py install
 ```
 
+> ### 一些已知的问题 ...
+> 如果您要建立游戏服务器，我们建议您使用`3.6`以上的python版本，最好是使用`3.7`版本的python，目前已知在服务器端，`3.5`版本的python会产生一些与`asyncio`库有关的问题，但原因还仍是未知，因而建议您避开较低的python版本。如果您在实际使用中发现了类似的问题，请开一个issue报告这个问题。
+
 ## 使用
 
 安装后，你可以使用Pointa的专用服务器或命令行客户端
@@ -41,13 +44,16 @@ $ python setup.py install
 ```sh
 $ python -m Pointa.Client -l [语言代码]
 ```
-[支持的语言](./SupportedLanguages.md)
+[Pointa CLI Client 支持的语言...](./SupportedLanguages.md)
 
 作为 `服务器`
 ```sh
 $ python -m Pointa.Server -p
 ```
 删除`-p`开启`开发`服务器 
+
+> ### 关于服务器配置
+> 我们使用了`flask`开发服务器，因而绝大部分配置选项都是在flask本身就已经拥有的，您可以在`./Pointa/Server/configs/Config.py`配置服务器。
 
 
 ## API

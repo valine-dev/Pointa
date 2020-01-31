@@ -43,14 +43,15 @@ POST TO `.../outGame/<key>`
 }
 ```
 And possible actions are:
-|Action|Values|
-|:----:|:----:|
-|roundBegin|actor="game", value=int ServerRound|
-|phaseBegin|actor="game", value={"num":int ServerRound, "phase":ServerPhase}|
-|pointRolled|actor=str player'sKey, value=int RolledPoint|
-|atkJudged|actor=str player'sKey, value=int RolledPoints|
-|playerKilled|actor="game", value=str player'sKey|
-|gameEnd|actor="game"|
+
+> |Action|Values|
+> |:----:|:----:|
+> |roundBegin|actor="game", value=int ServerRound|
+> |phaseBegin|actor="game", value={"num":int ServerRound, "phase":ServerPhase}|
+> |pointRolled|actor=str player'sKey, value=int RolledPoint|
+> |atkJudged|actor=str player'sKey, value=int RolledPoints|
+> |playerKilled|actor="game", value=str player'sKey|
+> |gameEnd|actor="game"|
 
 
 
