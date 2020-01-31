@@ -26,4 +26,4 @@
             >|def|Add **0.25x^2**(Rounded up as the result) to Executor's DEF value.|
             >|hel|Add **0.35x^2**(Rounded up as the result) to Executor's HP value but can't break the limit of 100.|
         - Step 3: Settling
-	        - If any player's HP goes to 0 or below 0, the player dies. If a player was killed in the round, the player loses. But if both of the players dead, the one who has the largest absolute value of HP loses. If no one dies, continue to next round.
+	        - If any player's HP goes to 0 or below 0, the player dies. The player who dies firstly loses.

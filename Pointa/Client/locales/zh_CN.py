@@ -30,7 +30,7 @@ ACTION_ATK = '{name} 使用了{num}点攻击，判定为{judge}点'
 ACTION_DEF = '{name} 使用了{num}点防御'
 ACTION_HEL = '{name} 使用了{num}点治疗'
 
-PHASE_2 = '您有15秒的时间完成本回合行动！'
+PHASE_2 = '您有25秒的时间完成本回合行动！'
 
 # Outputs Errors
 TIMEOUT_BAD = u'您的操作超时或输入有误！'

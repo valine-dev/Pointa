@@ -21,6 +21,7 @@ class Client:
         self.lang = lang
 
         self.atkJudgeCache = {}
+        self.deadCache = []
 
         # Loading Vars
         self.localVar = varsBundle[0]
@@ -34,7 +35,7 @@ class Client:
             if exitable:
                 if self.clientStatus['loggedIn']:
                     # Send quit request to server
-                    url = f"{self.localVar['targetUri']}/outGame/{self.localVar['selfKey']}"
+                    url = f"{self.localVar['targetUri']}/outGame/{self.localVar['key']}"
                     payload = {
                         'Action': 'Quit'
                     }
@@ -209,26 +210,23 @@ class Client:
                     actions.sort(key=lambda x: (int(x['value']), -int(x['action'])))
                     # Print them.
                     for action in actions:
-                        if action['action'] == '0':
-                            if action['value'] == '0':
-                                judge = "0"
-                            else:
-                                judge = self.atkJudgeCache[action['owner']]
-                            print(self.lang.ACTION_ATK.format(
-                                name=action['owner'],
-                                num=action['value'],
-                                judge=judge
-                            ))
-                        elif action['action'] == '1':
-                            print(self.lang.ACTION_DEF.format(
-                                name=action['owner'],
-                                num=action['value']
-                            ))
-                        elif action['action'] == '2':
-                            print(self.lang.ACTION_HEL.format(
-                                name=action['owner'],
-                                num=action['value']
-                            ))
+                        if action['value'] != '0':
+                            if action['action'] == '0':
+                                print(self.lang.ACTION_ATK.format(
+                                    name=action['owner'],
+                                    num=action['value'],
+                                    judge=self.atkJudgeCache[action['owner']]
+                                ))
+                            elif action['action'] == '1':
+                                print(self.lang.ACTION_DEF.format(
+                                    name=action['owner'],
+                                    num=action['value']
+                                ))
+                            elif action['action'] == '2':
+                                print(self.lang.ACTION_HEL.format(
+                                    name=action['owner'],
+                                    num=action['value']
+                                ))
                 self.localVar['progress']['phase'] = cmd['value']['phase']
 
             elif cmd['action'] == 'atkJudge':
@@ -243,23 +241,20 @@ class Client:
                 print(self.lang.PLAYER_KILLED.format(
                     name=nameMap[callMap[cmd['value']]]
                 ))
+                self.deadCache.append(nameMap[callMap[cmd['value']]])
 
             elif cmd['action'] == 'gameEnd':
-                hps = [
-                    json['playerStats']['self'][0]['hp'],
-                    json['playerStats']['another'][0]['hp']
-                ]
-                if hps[0] > hps[1]:
-                    print(self.lang.GAME_END.format(
-                        lose=nameMap['another']
-                    ))
-                elif hps[0] < hps[1]:
-                    print(self.lang.GAME_END.format(
-                        lose=nameMap['another']
-                    ))
-                else:
-                    print(self.lang.GAME_END_EQUAL)
-                return False
+                # Send quit request to server
+                url = f"{self.localVar['targetUri']}/outGame/{self.localVar['key']}"
+                payload = {
+                    'Action': 'Quit'
+                }
+                requests.post(url, json=payload)
+
+                print(self.lang.GAME_END.format(
+                    lose=self.deadCache[0]
+                ))
+
             self.localVar['localLog'].append(cmd)
         return True
 

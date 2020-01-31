@@ -137,24 +137,28 @@ class Pointa(object):
                         'atkJudge',
                         self.temp['target'].damage(action['value'])
                         )
+                    # Check Player's hp
+                    if self.temp['target'].properties['hp'] <= 0:
+                        return self.temp['target']
 
                 elif action['action'] == 1:  # Defense
                     self.players[
                         action['own']
                     ].properties[
                         'def'
-                    ] = (0.25 * pow(action['value'], 2))
+                    ] = math.ceil((0.25 * pow(action['value'], 2)))
 
                 elif action['action'] == 2:  # Healing
                     self.players[
                         action['own']
                     ].properties[
                         'hp'
-                    ] += (0.35 * pow(action['value'], 2))
+                    ] += math.ceil(((0.35 * pow(action['value'], 2))))
 
                     # Make sure the healing action won't break the max health
                     if self.players[action['own']].properties['hp'] > 100:
                         self.players[action['own']].properties['hp'] = 100
+        return 0
 
     def logger(self, actor, action, value):
         self.log.append(
@@ -194,10 +198,11 @@ class Pointa(object):
         # Phase 2 - Wait for the actions
         self.round['phase'] = 2
         self.logger('game', 'phaseBegin', self.round)
-        await asyncio.sleep(15)
+        await asyncio.sleep(25)
 
         # Phase 3 - Calculate the actions
-        self.settleRound()  # Make sure atk judge will be logged before phase is logged
+        result = self.settleRound()
+
         self.round['phase'] = 3
         self.logger('game', 'phaseBegin', self.round)
 
@@ -208,14 +213,8 @@ class Pointa(object):
         for key, p in self.players.items():
             p.roundClear()
 
-        # Check if Player failed
-        for key, p in self.players.items():
-            if p.properties['hp'] < 1:
-                self.logger('game', 'playerKilled', p.key)
-                self.temp['FINALSTAT'] = self.getStat()
-
-        # Return if anyone failed
-        if self.log[-1]['action'] == 'playerKilled':
+        if result != 0:  # Somebody dead
+            self.logger('game', 'playerKilled', result.key)
             self.logger('game', 'gameEnd', 0)
             return self.temp['FINALSTAT']  # Stop Coro
 

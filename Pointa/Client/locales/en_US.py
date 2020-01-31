@@ -30,7 +30,7 @@ ACTION_ATK = '{name} used {num} points to ATK，rolled {judge} points as judgeme
 ACTION_DEF = '{name} used {num} to DEF'
 ACTION_HEL = '{name} used {num} to HEL'
 
-PHASE_2 = 'You have only 15 secs to finish the operation!'
+PHASE_2 = 'You have only 25 secs to finish the operation!'
 
 # Outputs Errors
 TIMEOUT_BAD = u'Timeout or Bad Input!'
