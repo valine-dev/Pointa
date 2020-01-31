@@ -3,7 +3,7 @@ import random
 import time
 import uuid
 
-from flask import Flask, abort, g, jsonify, request, session
+from flask import Flask, abort, g, jsonify, request, session, Response
 
 from .DynamicEventLoop import DynamicEventLoop
 from .Pointa import Player, Pointa
@@ -81,7 +81,7 @@ def outGameHandler(key):
             abort(404)
     elif req['Action'] == 'Quit':
         data.playerList.pop(key)
-        return abort(200)
+        return Response('ok.')
 
 # Handling Requests in the Game period
 @app.route('/inGame/<key>', methods=['GET', 'POST'])
