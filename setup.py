@@ -19,9 +19,9 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     install_requires=[
-        'requests == 2.22.0',
-        'gevent',
-        'Flask == 1.0.2'
+        'gevent==1.4.0',
+        'Flask==1.1.1',
+        'requests==2.22.0'
     ],
     python_requires='>=3.7'
 )

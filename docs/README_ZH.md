@@ -1,6 +1,6 @@
 # Pointa! Project
 
-[中文](docs/README_ZH.md)
+![Pointa!](./Pointa_Scaled.png)
 
 ## 目录
 
@@ -19,8 +19,8 @@
 我们建议你在游玩、参与开发之前，至少先浏览一遍游戏规则书，这不仅能让你理解游戏中许多专有名词的含义，还因为Pointa本身确实是有趣的。
 
 **游戏规则书**
-- [English](docs/GameInstruction.md)
-- [中文](docs/GameInstruction_ZH.md)
+- [English](./GameInstruction.md)
+- [中文](./GameInstruction_ZH.md)
 
 ## 安装
 
@@ -41,7 +41,7 @@ $ python setup.py install
 ```sh
 $ python -m Pointa.Client -l [语言代码]
 ```
-[支持的语言](docs/SupportedLanguages.md)
+[支持的语言](./SupportedLanguages.md)
 
 作为 `服务器`
 ```sh
@@ -51,7 +51,7 @@ $ python -m Pointa.Server -p
 
 
 ## API
-[API Refrences (未完成)](docs/Pointa_Web_API_Refrences.md)
+[API Refrences (未完成)](./Pointa_Web_API_Refrences.md)
 
 ## 贡献
 无需感到拘束！发送PR或者[开个issue](https://github.com/KRedCell/Pointa/issues/new) 都可以！

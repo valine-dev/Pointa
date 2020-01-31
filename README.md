@@ -1,6 +1,8 @@
 # Pointa! Project
 
-[CN](docs/README_ZH.md)
+![Pointa!](./Pointa_Scaled.png)
+
+|   [Chinese](docs/README_ZH.md)    |
 
 ## Table of Contents
 
@@ -60,6 +62,6 @@ The project follows the [Contributor Covenant](http://contributor-covenant.org/v
 
 ## License
 
-[MIT © Red_Cell](../LICENSE)
+[MIT © Red_Cell](./LICENSE)
 
 **Special Thanks to [Standard Readme](https://github.com/RichardLitt/standard-readme)**
