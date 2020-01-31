@@ -216,7 +216,7 @@ class Pointa(object):
         if result != 0:  # Somebody dead
             self.logger('game', 'playerKilled', result.key)
             self.logger('game', 'gameEnd', 0)
-            return self.temp['FINALSTAT']  # Stop Coro
+            return self.log  # Stop Coro
 
         # Next Round
         await self.main()

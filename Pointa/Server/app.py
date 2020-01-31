@@ -81,6 +81,7 @@ def outGameHandler(key):
             abort(404)
     elif req['Action'] == 'Quit':
         data.playerList.pop(key)
+        return abort(200)
 
 # Handling Requests in the Game period
 @app.route('/inGame/<key>', methods=['GET', 'POST'])
@@ -89,8 +90,11 @@ def inGameHandler(key):
     global Del
     Data = data
 
-    # Updating last communicating time 
-    data.playerList[key][1] = int(time.time())
+    # Updating last communicating time
+    try:
+        data.playerList[key][1] = int(time.time())
+    except KeyError:
+        abort(404)  # Player not found
 
     currentMatches = []
 
@@ -104,7 +108,7 @@ def inGameHandler(key):
     try:
         currentMatch = currentMatches[0]
     except IndexError:
-        abort(404)
+        abort(404)  # Match not found
 
     # Insert Action
     if request.method == 'POST':
