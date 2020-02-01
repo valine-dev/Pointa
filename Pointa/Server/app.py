@@ -148,6 +148,7 @@ def inGameHandler(key):
         # Avoid Client Cheating
         if currentMatch.round['phase'] == 3:
             anotherAction = stat['players'][another].actions
+            selfAction = stat['players'][key].actions
 
         try:
             username = Data.playerList[stat['players'][another].key][2]
@@ -161,7 +162,7 @@ def inGameHandler(key):
                 'playerStats': {
                     'self': [
                         stat['players'][key].properties,
-                        stat['players'][key].actions
+                        selfAction
                     ],
                     'another': [
                         stat['players'][another].properties,
