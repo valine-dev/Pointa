@@ -12,6 +12,6 @@ for opt_name,opt_value in opts:
         production = True
 
 if production:
-    Serve(5000)
+    Serve(UserConfig.PORT)
 else:
-    init_app(UserConfig).run(port=5000)
+    init_app(UserConfig).run(port=UserConfig.PORT)

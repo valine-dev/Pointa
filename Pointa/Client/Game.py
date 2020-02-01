@@ -57,7 +57,11 @@ class Client:
             'Target': self.localVar['username']
         }
         url = f"{self.localVar['targetUri']}/outGame/{self.localVar['key']}"
-        req = requests.post(url, json=payload)
+        try:
+            req = requests.post(url, json=payload)
+        except ConnectionRefusedError:
+            print(self.lang.BAD_INPUT)
+            return False
 
         # Get Result
         if req.status_code == 200:
@@ -122,7 +126,7 @@ class Client:
             system(self.clear)  # Clear Screen
             return True
 
-        elif choose == '3':
+        elif choose == '2':
             quit()
 
         else:

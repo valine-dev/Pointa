@@ -2,6 +2,7 @@ class DefaultConfig:
     DEBUG = False
     Admin = 'Name'
     Password = 'word'
+    PORT = 5000
 
 
 class UserConfig(DefaultConfig):
