@@ -22,6 +22,7 @@ class Client:
 
         self.atkJudgeCache = {}
         self.deadCache = []
+        self.playerAmount = 0
 
         # Loading Vars
         self.localVar = varsBundle[0]
@@ -66,17 +67,43 @@ class Client:
         # Get Result
         if req.status_code == 200:
             self.localVar['key'] = req.json()['UUID']
+            self.playerAmount = req.json()['Online']
             self.clientStatus['loggedIn'] = True
             return True
         else:
             print(self.lang.REQUEST_ERROR.format(code=str(req.status_code)))
             return False
 
+    def matchWait(self):
+        print(self.lang.WAIT)
+        url = self.URL_STRUCT.format(
+                self.localVar['targetUri'],
+                self.localVar['key'],
+                '0',
+                '0',
+                '0'
+            )            # Waiting Loop
+        while requests.get(url).status_code != 200:
+            pass
+        json = requests.get(url).json()
+        ar = json['playerStats']['another']
+        self.anotherPlayer['key'] = ar[2]
+        self.anotherPlayer['name'] = ar[3]
+        print(self.lang.GAME_START.format(name=self.anotherPlayer['name']))
+        # Ready to Game
+        self.clientStatus['inGame'] = True
+        time.sleep(5)  
+        system(self.clear)  # Clear Screen
+        return True
+
     def Menu(self):
         '''Menu Stage, Call after Login(), before Game Loop
         '''
         system(self.clear)  # Clear Screen
-        print(self.lang.MENU.format(key=self.localVar['key']))
+        print(self.lang.MENU.format(
+            key=self.localVar['key'],
+            num=str(self.playerAmount)
+        ))
         choose = self.ARinput(self.lang.MENU_SELECT)
         if choose == '0':
             p = self.ARinput(self.lang.INVITE)
@@ -104,29 +131,19 @@ class Client:
                 print(self.lang.REQUEST_ERROR.format(code=req.status_code))
 
         elif choose == '1':
-            print(self.lang.WAIT)
-            url = self.URL_STRUCT.format(
-                    self.localVar['targetUri'],
-                    self.localVar['key'],
-                    '0',
-                    '0',
-                    '0'
-                )
-            # Waiting Loop
-            while requests.get(url).status_code != 200:
-                pass
-            json = requests.get(url).json()
-            ar = json['playerStats']['another']
-            self.anotherPlayer['key'] = ar[2]
-            self.anotherPlayer['name'] = ar[3]
-            print(self.lang.GAME_START.format(name=self.anotherPlayer['name']))
-            # Ready to Game
-            self.clientStatus['inGame'] = True
-            time.sleep(5)  
-            system(self.clear)  # Clear Screen
-            return True
+            return self.matchWait()
 
         elif choose == '2':
+            # Make Request
+            payload = {
+                'Action': 'Matchmaking'
+            }
+            url = f"{self.localVar['targetUri']}/outGame/{self.localVar['key']}"
+            req = requests.post(url, json=payload)
+            if req.status_code == 200:
+                return self.matchWait()
+
+        elif choose == '3':
             quit()
 
         else:

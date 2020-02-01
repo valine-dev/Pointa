@@ -9,9 +9,11 @@ ACTION = u'Enter the value of action {ACTION} > '
 WAIT = u'Waiting'
 GAME_START = u'Your match against {name} created! Game is about to begin!'
 MENU = u'''----------------Welcome to Pointa! Your ID is {key}----------------
-    ---- [0] Invite
-    ---- [1] Wait for invitation
-    ---- [2] Quit
+    Online players in the server: {num}
+    ---- [0] Invite an player
+    ---- [1] Wait for an invitation
+    ---- [2] Start a match making
+    ---- [3] Quit
 '''
 ROUND_BEGIN = u'\n----------------Round {num} Begin----------------'
 ROLLED = u'{name}Rolled{num}Points！'

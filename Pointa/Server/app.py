@@ -18,6 +18,7 @@ class Data:
         self.matchList = {}
         self.req = 0
         self.taskList = {}
+        self.matchMakers = []
 
 data = Data()
 Del = DynamicEventLoop()
@@ -35,7 +36,7 @@ def before():
             list(Del.taskList.items())
         ]
         for key, p in temps[0]:  # Overtime Detection
-            if int(time.time()) - p[1] >= 60:
+            if int(time.time()) - p[1] >= 120:
                 data.playerList.pop(key)
         for key, ga in temps[1]:  # Done match Detection
             if ga.done():
@@ -56,7 +57,10 @@ def outGameHandler(key):
             int(time.time()),  # Last Communicate time
             req['Target'] # Player's Username
         ]})
-        return jsonify({'UUID': str(uid)})
+        return jsonify({
+            'UUID': str(uid),
+            'Online': len(data.playerList)
+        })
 
     elif req['Action'] == 'Invite':
 
@@ -79,8 +83,26 @@ def outGameHandler(key):
             return jsonify({'targetName': data.playerList[req['Target']][2]})
         else:
             abort(404)
+
     elif req['Action'] == 'Quit':
         data.playerList.pop(key)
+        return Response('ok.')
+
+    elif req['Action'] == 'Matchmaking':
+        if len(data.matchMakers) == 0:
+            data.matchMakers.append(key)
+        else:
+            another = data.matchMakers.pop(0)
+            match = Pointa(
+                data.playerList[key][0],
+                data.playerList[another][0],
+                Del.loop
+            )
+            Del.append(match, match.main())
+            keys = (key + ',' + another)
+            data.matchList.update({
+                keys: match
+            })
         return Response('ok.')
 
 # Handling Requests in the Game period
