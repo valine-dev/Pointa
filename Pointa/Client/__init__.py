@@ -47,6 +47,10 @@ varsBundle = [localVar, anotherPlayer, clientStatus]
 
 client = Client(system(), locale, varsBundle, URL_STRUCT)
 
+Version = 'Pointa! v0.22-alpha [2020/2/1]'
+
+print(Version)
+
 # Game Begin
 if client.Login():
     while not client.clientStatus['inGame']:
