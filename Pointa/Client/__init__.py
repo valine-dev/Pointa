@@ -63,4 +63,5 @@ while preprocess:
     if not client.Game():
         break
 
+client.ARinput(locale.QUIT)
 quit()
