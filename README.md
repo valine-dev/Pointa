@@ -30,16 +30,9 @@
 
 The project is based on `Python`, so make sure your python version is above `3.7`.
 
-Get the latest version from this repository with(or better download [the latest release](https://github.com/KRedCell/Pointa/releases)):
-
+The project uses `Pypi`
 ```sh
-$ git clone https://github.com/KRedCell/Pointa.git
-```
-
-Then
-
-```sh
-$ python setup.py install
+$ pip install Pointa
 ```
 
 > ### Some of the known issues
