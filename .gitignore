@@ -8,6 +8,7 @@ public_key.pem
 Pointa.egg-info
 dist
 Pointa-*
+*.db
 
 [Ll]ibrary/
 [Tt]emp/

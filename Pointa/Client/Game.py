@@ -1,5 +1,6 @@
 import json
 import time
+import math
 from os import system
 
 import requests
@@ -201,7 +202,10 @@ class Client:
                 print(self.lang.ROUND_BEGIN.format(num=cmd['value']))
 
             elif cmd['action'] == 'pointRolled':
-                print(self.lang.ROLLED.format(name=nameMap[callMap[cmd['actor']]], num=cmd['value']))
+                print(self.lang.ROLLED.format(
+                    name=nameMap[callMap[cmd['actor']]],
+                    num=cmd['value']
+                ))
 
             elif cmd['action'] == 'phaseBegin':
                 if cmd['value']['phase'] == 2:
@@ -224,29 +228,42 @@ class Client:
                         for action in p[1].items():
                             actions.append({
                                 'owner': nameMap[t],
-                                # Because there are no calculates here...
-                                'action': str(action[0]),
-                                'value': str(action[1])
+                                'action': int(action[0]),
+                                'value': int(action[1])
                             })
-                    actions.sort(key=lambda x: (int(x['value']), -int(x['action'])))
+                    actions.sort(key=lambda x: (x['value'], -x['action']))
                     # Print them.
                     for action in actions:
-                        if action['value'] != '0':
-                            if action['action'] == '0':
+                        if action['value'] != 0:
+                            if action['action'] == 0:
+                                # Atk judge simulate
+                                judge = self.atkJudgeCache[action['owner']]
+                                dmg = 0
+                                pt = action['value']
+                                if judge in range(1, 6):
+                                    dmg = math.ceil((0.30 * pow(pt, 2)) * 0.5)
+                                elif judge in range(6, 12):
+                                    dmg = math.ceil(0.30 * pow(pt, 2))
+                                elif judge == 12:
+                                    dmg = math.ceil((0.30 * pow(pt, 2)) * 1.5)
+
                                 print(self.lang.ACTION_ATK.format(
                                     name=action['owner'],
-                                    num=action['value'],
-                                    judge=self.atkJudgeCache[action['owner']]
+                                    num=pt,
+                                    judge=self.atkJudgeCache[action['owner']],
+                                    value=dmg
                                 ))
-                            elif action['action'] == '1':
+                            elif action['action'] == 1:
                                 print(self.lang.ACTION_DEF.format(
                                     name=action['owner'],
-                                    num=action['value']
+                                    num=action['value'],
+                                    value=math.ceil((0.25 * pow(action['value'], 2)))
                                 ))
-                            elif action['action'] == '2':
+                            elif action['action'] == 2:
                                 print(self.lang.ACTION_HEL.format(
                                     name=action['owner'],
-                                    num=action['value']
+                                    num=action['value'],
+                                    value=math.ceil(((0.35 * pow(action['value'], 2))))
                                 ))
                 self.localVar['progress']['phase'] = cmd['value']['phase']
 

@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="Pointa",
-    version="0.2.31",
+    version="0.2.4",
     author="KRedCell",
     author_email="krov_red_cell@outlook.com",
     description="Pointa Dedicated Server & CLI Based Client",

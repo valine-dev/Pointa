@@ -28,9 +28,9 @@ GAME_END = u'Game Over！{lose} loses！'
 GAME_END_EQUAL = u'Game Over！Draw！'
 ACTIONS_HEAD = u'\n-------Round {num} Action Summary-------'
 
-ACTION_ATK = '{name} used {num} points to ATK，rolled {judge} points as judgement.'
-ACTION_DEF = '{name} used {num} to DEF'
-ACTION_HEL = '{name} used {num} to HEL'
+ACTION_ATK = '{name} used {num} points to ATK，rolled {judge} points as judgement, caused {value} damages!'
+ACTION_DEF = '{name} used {num} to DEF, added {value} def!'
+ACTION_HEL = '{name} used {num} to HEL, added {value} HP!'
 
 PHASE_2 = 'You have only 25 secs to finish the operation!'
 

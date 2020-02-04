@@ -2,6 +2,7 @@ import asyncio
 import random
 import time
 import uuid
+import pickledb
 
 from flask import Flask, abort, g, jsonify, request, session, Response
 
@@ -19,6 +20,7 @@ class Data:
         self.req = 0
         self.taskList = {}
         self.matchMakers = []
+        self.db = pickledb.load('record.db', False, sig=False)
 
 data = Data()
 Del = DynamicEventLoop()
@@ -68,6 +70,7 @@ def outGameHandler(key):
 
         if req['Target'] in data.playerList.keys():
 
+            # Create match
             match = Pointa(
                     data.playerList[key][0],
                     data.playerList[req['Target']][0],
@@ -75,17 +78,26 @@ def outGameHandler(key):
                 )
             Del.append(match, match.main())
 
+            # Add to matchlist
             keys = (key + ',' + req['Target'])
             data.matchList.update({
                 keys: match
             })
+
+            # Record happend match
+            now = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            data.db.set(now, keys)
+            data.db.dump()
 
             return jsonify({'targetName': data.playerList[req['Target']][2]})
         else:
             abort(404)
 
     elif req['Action'] == 'Quit':
-        data.playerList.pop(key)
+        try:
+            data.playerList.pop(key)
+        except KeyError:
+            pass
         return Response('ok.')
 
     elif req['Action'] == 'Matchmaking':

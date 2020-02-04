@@ -28,9 +28,9 @@ GAME_END = u'游戏结束！{lose}失败！'
 GAME_END_EQUAL = u'游戏结束！平局！'
 ACTIONS_HEAD = u'\n-------第{num}回合行动总结-------'
 
-ACTION_ATK = '{name} 使用了{num}点攻击，判定为{judge}点'
-ACTION_DEF = '{name} 使用了{num}点防御'
-ACTION_HEL = '{name} 使用了{num}点治疗'
+ACTION_ATK = '{name} 使用了{num}点攻击，判定为{judge}点，造成{value}伤害！'
+ACTION_DEF = '{name} 使用了{num}点防御，增加{value}防御！'
+ACTION_HEL = '{name} 使用了{num}点治疗，治疗了{value}！'
 
 PHASE_2 = '您有25秒的时间完成本回合行动！'
 
