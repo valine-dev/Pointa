@@ -47,7 +47,7 @@ varsBundle = [localVar, anotherPlayer, clientStatus]
 
 client = Client(system(), locale, varsBundle, URL_STRUCT)
 
-Version = 'Pointa! v0.23-alpha [2020/2/1]'
+Version = 'Pointa! v0.24-alpha [2020/2/4]'
 
 print(Version)
 
