@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="Pointa",
-    version="0.2.4",
+    version="0.2.32",
     author="KRedCell",
     author_email="krov_red_cell@outlook.com",
     description="Pointa Dedicated Server & CLI Based Client",
@@ -21,7 +21,8 @@ setuptools.setup(
     install_requires=[
         'gevent',
         'Flask',
-        'requests'
+        'requests',
+        'pickledb'
     ],
     python_requires='>=3.7'
 )
